@@ -40,7 +40,9 @@ def train_model(texts: list[str], embed_dim: int, window: int, epochs: int, batc
 
         avg_loss = total_loss / len(loader)
         print(f"Epoch {epoch}/{epochs} — Loss: {avg_loss:.4f}")
+        if avg_loss <= 0.02:
+            break
     end = time.perf_counter()
-    time_alg = (end - start) * 1_000_000
-    print(f"Education time: {time_alg:.2f} microseconds" )
+    time_alg = (end - start)
+    print(f"Education time: {time_alg:.4f} seconds" )
     return model, dataset

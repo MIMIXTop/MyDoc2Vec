@@ -54,14 +54,16 @@ class Doc2Vec(nn.Module):
         self.doc_embed  = nn.Embedding(num_docs, embed_dim)
         self.fc         = nn.Linear(embed_dim, vocab_size)
         self.log_softmax= nn.LogSoftmax(dim=1)
+        self.dropout = nn.Dropout(0.3)
 
     def forward(self, doc_ids: torch.Tensor, context_ids: torch.Tensor):
 
         d_vec = self.doc_embed(doc_ids)                             
         c_vec = self.word_embed(context_ids).mean(dim=1)            
-        h     = d_vec + c_vec                                        
-        out   = self.fc(h)                                          
-        return self.log_softmax(out)                                
+        h     = d_vec + c_vec  
+        h = self.dropout(h)                                      
+        out   = self.fc(h)
+        return self.log_softmax(out)                              
 
 
 def collate_fn(batch):

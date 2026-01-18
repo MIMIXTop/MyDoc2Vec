@@ -1,3 +1,6 @@
 /TEXT
 /__pycache__
 /data.csv
+.venv
+word
+model_state.pt
