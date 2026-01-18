@@ -75,3 +75,17 @@ def collate_fn(batch):
     return  docs_t, words_t, ctx_p
 
 
+def initModel(model_name: str):
+    checkpoint = torch.load(model_name, map_location="cpu")
+    model = Doc2Vec(
+        vocab_size=checkpoint["vocab_size"],
+        num_docs=checkpoint["num_docs"],
+        embed_dim=checkpoint["embedding_dim"]
+    )
+
+    model.load_state_dict(checkpoint["model_state_dict"])
+
+    word2idx = checkpoint["word2idx"]
+
+    return model, word2idx
+

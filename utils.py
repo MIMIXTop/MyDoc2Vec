@@ -74,3 +74,9 @@ def get_lemma(text: str) -> list[str] :
         token.lemmatize(morph_vocab)
     
     return [token.lemma for token in doc.tokens if bool(re.fullmatch(r'^[a-zA-Zа-яА-ЯёЁ]+$', token.lemma))]
+
+def document_analisys(documents: list[str]):
+    
+    
+    
+    return ...
