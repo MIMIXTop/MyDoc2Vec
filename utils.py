@@ -70,13 +70,39 @@ def get_lemma(text: str) -> list[str] :
     doc.tag_morph(morph_tagger)
     doc.parse_syntax(syntax_parser)
 
-    for token in doc.tokens:
+    for token in doc.tokens: # type: ignore
         token.lemmatize(morph_vocab)
     
-    return [token.lemma for token in doc.tokens if bool(re.fullmatch(r'^[a-zA-Zа-яА-ЯёЁ]+$', token.lemma))]
+    return [token.lemma for token in doc.tokens if bool(re.fullmatch(r'^[a-zA-Zа-яА-ЯёЁ]+$', token.lemma))] # type: ignore
 
-def document_analisys(documents: list[str]):
+class MyDoc():
+    id: str
+    text: str
+
+class OneDocSim():
+    id: str
+    sim_doc: float
+
+    def __init__(self, idx: str, sim_documen: float):
+        self.id = idx
+        self.sim_doc = sim_documen
+
+class DocSim():
+    id: str
+    arr_sim: list[OneDocSim]
+
+def document_analisys(documents: list[MyDoc], word2idx: dict[str,int], word_embeddings: torch.nn.Embedding, device: torch.device):
+    doc_vec_list = []
+    for doc in documents:
+        doc_vec_list.append(get_doc_vec(document=doc.text, word2idx=word2idx, word_embeddings=word_embeddings, device=device))
+
+    arr_doc_sim = list[DocSim]
+
+    for i in range(len(doc_vec_list)):
+        doc_sim = DocSim
+        doc_sim.id = str(i)
+        for j in range(len(doc_vec_list)):
+            doc_sim.arr_sim.append(OneDocSim(documents[j].id, cos_sim(doc_vec_list[i], doc_vec_list[j])))
+        arr_doc_sim.append(doc_sim) # type: ignore
     
-    
-    
-    return ...
+    return arr_doc_sim

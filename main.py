@@ -13,6 +13,7 @@ model, word2idx = initModel("model_state.pt")
 
 @app.post("/analysis")
 async def hello(document_list: list[Document]): 
+    
     return len(document_list)
 
 if __name__ == "__main__":
