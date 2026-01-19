@@ -75,9 +75,14 @@ def get_lemma(text: str) -> list[str] :
     
     return [token.lemma for token in doc.tokens if bool(re.fullmatch(r'^[a-zA-Zа-яА-ЯёЁ]+$', token.lemma))] # type: ignore
 
+
 class MyDoc():
     id: str
     text: str
+    
+    def __init__(self, id: str, text: str) -> None:
+        self.id = id
+        self.text = text
 
 class OneDocSim():
     id: str
@@ -91,18 +96,36 @@ class DocSim():
     id: str
     arr_sim: list[OneDocSim]
 
-def document_analisys(documents: list[MyDoc], word2idx: dict[str,int], word_embeddings: torch.nn.Embedding, device: torch.device):
+    def __init__(self, id: str = ""):
+        self.id = id
+        self.arr_sim: list[OneDocSim] = []
+
+def document_analisys(documents: list[MyDoc], word2idx: dict[str,int], word_embeddings: torch.nn.Embedding, device: str) -> list[DocSim]:
     doc_vec_list = []
     for doc in documents:
-        doc_vec_list.append(get_doc_vec(document=doc.text, word2idx=word2idx, word_embeddings=word_embeddings, device=device))
+        doc_vec_list.append(get_doc_vec(document=doc.text, word2idx=word2idx, word_embeddings=word_embeddings, device=torch.device(device)))
 
-    arr_doc_sim = list[DocSim]
+    arr_doc_sim: list[DocSim] = []
 
     for i in range(len(doc_vec_list)):
-        doc_sim = DocSim
-        doc_sim.id = str(i)
+        doc_sim = DocSim()
+        doc_sim.id = documents[i].id
+        doc_sim.arr_sim = []
         for j in range(len(doc_vec_list)):
             doc_sim.arr_sim.append(OneDocSim(documents[j].id, cos_sim(doc_vec_list[i], doc_vec_list[j])))
         arr_doc_sim.append(doc_sim) # type: ignore
     
     return arr_doc_sim
+
+def serialize_to_json(doc_vec: list[DocSim])-> list[dict]: 
+    data = []
+    for doc in doc_vec:
+        sim_list = [
+            {"id": item.id, "value": round(item.sim_doc, 3)}
+            for item in doc.arr_sim
+        ]
+        data.append({
+            "id": doc.id,
+            "similarity": sim_list
+        })
+    return data
