@@ -2,7 +2,6 @@ import torch
 import time
 from torch.utils.data import DataLoader
 from doc2vec import Doc2VecDataset, Doc2Vec, collate_fn
-from utils import del_stop_words
 
 def train_model(texts: list[str], embed_dim: int, window: int, epochs: int, batch_size: int, lr: float):
     dataset = Doc2VecDataset(texts, window_size=window)
